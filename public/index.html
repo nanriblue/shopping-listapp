@@ -158,10 +158,12 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = 'https://kgcudlhoszlzsovcismv.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_T4OkePEUpmHJwYDieV8A-w_FDn9iVgb';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script type="module">
+    const { createClient } = window.supabase;
+    const db = createClient(
+      'https://kgcudlhoszlzsovcismv.supabase.co',
+      'sb_publishable_T4OkePEUpmHJwYDieV8A-w_FDn9iVgb'
+    );
 
     let items = [];
 
@@ -200,7 +202,7 @@
     }
 
     async function loadItems() {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('shopping_items')
         .select('*')
         .order('created_at', { ascending: true });
@@ -220,7 +222,7 @@
       input.value = '';
       input.focus();
 
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('shopping_items')
         .insert({ name, checked: false })
         .select();
@@ -238,7 +240,7 @@
       if (!item) return;
 
       const newChecked = !item.checked;
-      const { error } = await supabase
+      const { error } = await db
         .from('shopping_items')
         .update({ checked: newChecked })
         .eq('id', id);
@@ -252,7 +254,7 @@
     }
 
     async function remove(id) {
-      const { error } = await supabase
+      const { error } = await db
         .from('shopping_items')
         .delete()
         .eq('id', id);
@@ -264,6 +266,10 @@
       items = items.filter(i => i.id !== id);
       render();
     }
+
+    window.addItem = addItem;
+    window.toggle = toggle;
+    window.remove = remove;
 
     loadItems();
     input.focus();

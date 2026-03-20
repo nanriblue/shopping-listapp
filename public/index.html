@@ -173,7 +173,7 @@
     const emptyEl = document.getElementById('empty');
 
     input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') addItem();
+      if (e.key === 'Enter' && !e.isComposing) addItem();
     });
 
     function render() {
